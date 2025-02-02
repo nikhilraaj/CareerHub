@@ -1,26 +1,27 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
-from flask import Flask, request, render_template, redirect, url_for, session, flash
+import os
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# Get MongoDB URI from environment variable
+uri = os.getenv("MONGO_URI", "your_default_mongo_uri_here")  # Fallback to a default URI if the environment variable is not set
+
+# Initialize Flask app
 app = Flask(__name__)
 
-# MongoDB connection URI
-uri = "mongodb+srv://mustafa:1234@cluster0.su4lp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+# MongoDB connection setup
 client = MongoClient(uri, server_api=ServerApi('1'))
-
-
 db = client["question_db"]
 collection = db["questions"]
-user_collection = db["users"]  
+user_collection = db["users"]
 
-app.secret_key = 'dcvdsdcdwsert65432@#$%^5r4ecvgtredvbgfdm' 
+# Secret key for session management
+app.secret_key = 'dcvdsdcdwsert65432@#$%^5r4ecvgtredvbgfdm'
 
 @app.route("/", methods=["GET"])
 def Home():
-    # Check if the user is logged in
     is_logged_in = 'user_id' in session
     return render_template("index.html", is_logged_in=is_logged_in)
 
@@ -29,10 +30,9 @@ def get_all_questions():
     if "user_id" not in session:  # Check if user is logged in
         return redirect(url_for("login"))  # Redirect non-logged-in users to login page
 
-    # Retrieve all questions sorted by topic
     questions = collection.find().sort("topic", 1)  # 1 for ascending order
-
     question_list = []
+
     for idx, question in enumerate(questions, start=1):
         question_list.append({
             "sr_no": idx,
@@ -58,13 +58,11 @@ def edit_question(id):
         update_data["practice_link"] = data["practice_link"]
 
     collection.update_one({"_id": ObjectId(id)}, {"$set": update_data})
-
     return redirect(url_for('get_all_questions'))
 
 @app.route("/delete_question/<id>", methods=["POST"])
 def delete_question(id):
     result = collection.delete_one({"_id": ObjectId(id)})
-
     if result.deleted_count == 0:
         return jsonify({"error": "Question not found"}), 404
 
@@ -99,12 +97,10 @@ def register():
         password = request.form["password"]
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-        # Check if user already exists
         if user_collection.find_one({"username": username}):
-            flash("User already exists!", "danger")  # Flash error message
+            flash("User already exists!", "danger")
             return redirect(url_for("register"))
 
-        # Insert new user into the users collection
         user_collection.insert_one({"username": username, "password": hashed_password})
         flash("Registration successful! Please login.", "success")
         return redirect(url_for("login"))
@@ -120,9 +116,9 @@ def login():
         user = user_collection.find_one({"username": username})
         if user and check_password_hash(user["password"], password):
             session["user_id"] = str(user["_id"])
-            return redirect(url_for("Home"))  
+            return redirect(url_for("Home"))
 
-        flash("Invalid username or password!", "danger")  
+        flash("Invalid username or password!", "danger")
         return redirect(url_for("login"))
 
     return render_template("login.html")
