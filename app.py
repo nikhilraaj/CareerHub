@@ -11,14 +11,14 @@ uri = os.getenv("MONGO_URI", "your_default_mongo_uri_here")  # Fallback to a def
 # Initialize Flask app
 app = Flask(__name__)
 
-# MongoDB connection setup
+# Secret key for session management
+app.secret_key = os.getenv("SECRET_KEY", "your_default_secret_key_here")
+
+# Initialize MongoDB client within the route or app function to prevent issues with multi-threading
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client["question_db"]
 collection = db["questions"]
 user_collection = db["users"]
-
-# Secret key for session management
-app.secret_key = 'dcvdsdcdwsert65432@#$%^5r4ecvgtredvbgfdm'
 
 @app.route("/", methods=["GET"])
 def Home():
