@@ -4,131 +4,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerHub</title>
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
-        body {
-            background-color: #000000;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, #00091d 1px);
-            background-size: 20px 20px;
-            font-family: 'Open Sans', sans-serif;
-        }
-
-        .hamburger-icon {
-            width: 30px;
-            height: 5px;
-            background-color: white;
-            margin: 6px auto;
-            transition: 0.4s;
-        }
-
-        .navbar-toggler {
-            background: transparent;
-            border: none;
-        }
-
-        .navbar-toggler.collapsed .hamburger-icon:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 6px);
-        }
-
-        .navbar-toggler.collapsed .hamburger-icon:nth-child(2) {
-            opacity: 0;
-        }
-
-        .navbar-toggler.collapsed .hamburger-icon:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -6px);
-        }
-
-        .navbar-brand {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #FF6F61;
-        }
-
-        .navbar-brand:hover {
-            color: #a2c3ff;
-        }
-
+        /* Navbar hover effect */
         .nav-link {
-            color: white !important;
+            color: #333 !important;
             font-weight: 600;
-            font-size: smaller;
-            transition: color 0.3s ease;
         }
 
         .nav-link:hover {
-            color: #61d5ff;
+            color: black !important;
+            transition: 0.3s ease-in-out;
+        }
+
+        /* Dropdown open on hover */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
         }
 
         .dropdown-menu {
-            display: none;
-            background-color: #2d2d2d;
+            transition: all 0.3s ease-in-out;
         }
 
-        .nav-item:hover .dropdown-menu {
-            display: block;
+        /* Search input */
+        .form-control {
+            width: 250px;
+            border-radius: 20px;
         }
 
-        .dropdown-item {
-            color: white;
+        /* Buttons rounded for smooth UI */
+        .btn {
+            font-weight: 600;
+            border-radius: 20px;
         }
 
-        .dropdown-item:hover {
-            color: #FF6F61;
-            background-color: #333;
+        /* Navbar shadow effect */
+        .navbar {
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-outline-success,
-        .btn-outline-primary {
-            color: white;
-            border-color: white;
+        /* Custom Toggler Icon */
+        .navbar-toggler {
+            border: none;
+            outline: none;
         }
 
-        .btn-outline-success:hover,
-        .btn-outline-primary:hover {
-            color: #FF6F61;
-            border-color: #FF6F61;
+        .navbar-toggler-icon {
+            width: 30px;
+            height: 30px;
+            background: url("https://cdn-icons-png.flaticon.com/512/2976/2976215.png") no-repeat center;
+            background-size: contain;
         }
 
-        .btn-outline-primary {
-            margin-left: 10px;
+        /* Hide search box on mobile */
+        @media (max-width: 767px) {
+            .search-container {
+                display: none;
+            }
         }
 
-        /* Disable content for non-logged-in users */
-        .disabled-content {
-            pointer-events: none;
-            opacity: 0.5;
+        /* Fixed navbar at the top with overflow handling */
+        .navbar.fixed-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        /* Spacing below navbar for content */
+        body {
+            padding-top: 80px; /* Adjust for navbar height */
+        }
+
+        /* Blur effect for background when the menu is open */
+        .navbar.blur-background {
+            backdrop-filter: blur(5px);
         }
     </style>
-    <title>CareerHub</title>
 </head>
 
 <body>
-
-    <nav class="navbar navbar-expand-lg bg-dark">
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top" id="navbar">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">CareerHub</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
-                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-                <div class="hamburger-icon"></div>
-                <div class="hamburger-icon"></div>
-                <div class="hamburger-icon"></div>
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold text-primary fs-4" href="#">CareerHub</a>
+
+            <!-- Toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" onclick="toggleMenu()">
+                <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
+                        <a class="nav-link" href="#">Home</a>
                     </li>
+
+                    <!-- Career Roadmaps Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             Career Roadmaps
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu border-0 shadow-sm">
                             <li><a class="dropdown-item" href="#">Software Engineering</a></li>
                             <li><a class="dropdown-item" href="#">Data Science</a></li>
                             <li><a class="dropdown-item" href="#">UI/UX Design</a></li>
@@ -136,6 +130,7 @@
                             <li><a class="dropdown-item" href="#">More...</a></li>
                         </ul>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="#">Resume Builder</a>
                     </li>
@@ -145,10 +140,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Community</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Resources</a>
-                      
-                        <ul class="dropdown-menu">
+
+                    <!-- Resources Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Resources
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow-sm">
                             <li><a class="dropdown-item" href="{{ url_for('get_all_questions') }}">DSA Questions</a></li>
                             <li><a class="dropdown-item" href="#">Data Science</a></li>
                             <li><a class="dropdown-item" href="#">UI/UX Design</a></li>
@@ -157,227 +155,306 @@
                         </ul>
                     </li>
 
-                    
                     <li class="nav-item">
                         <a class="nav-link" href="#">Contact Us</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+
+                <!-- Search & Login -->
+                <form class="d-flex search-container">
+                    <input class="form-control me-2 border" type="search" placeholder="Search" aria-label="Search">
                     {% if is_logged_in %}
-                        <a href="{{ url_for('logout') }}">
-                            <button class="btn btn-outline-primary" type="button">Logout</button>
-                        </a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-primary">Logout</a>
                     {% else %}
-                        <a href="{{ url_for('login') }}">
-                            <button class="btn btn-outline-primary" type="button">Login</button>
-                        </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
                     {% endif %}
                 </form>
             </div>
         </div>
     </nav>
 
-    <div class="hero-section d-flex text-center text-white"
+
+
+
+
+
+
+    <div class="hero-section d-flex text-center text-black"
         style="position: relative; background: url('hero-background.jpg') no-repeat center center; background-size: cover; padding-top: 200px; padding-bottom: 30px;">
-        <div style="position: absolute; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="position: absolute; top: 0; left: 0; height: 100%; width: 100%; ">
         </div>
 
         <div class="container" style="position: relative; z-index: 1;">
             <h1 class="display-4 fw-bold mb-3">Build Your <span class="text-warning">Future</span> with CareerHub</h1>
-            <p class="lead mb-4 fs-6 fw-normal text-muted">Explore career roadmaps, connect with mentors, and access all the tools you need to succeed.</p>
-            <a href="#signup" class="btn btn-primary btn-sm custom-btn">Get Started</a>
-            <a href="#signup" class="btn btn-outline-success btn-sm custom-btn">Explore Blog</a>
+            <p class="lead mb-4 fs-6 fw-normal text-muted">Explore career roadmaps, connect with mentors, and access all
+                the tools you need to succeed.</p>
+                <a href="#signup" class="btn btn-primary btn-sm rounded-pill shadow-sm">Get Started</a>
+                <a href="#signup" class="btn btn-outline-success btn-sm rounded-pill shadow-sm">Explore Blog</a>
+                
+        </div>
+
+    </div>
+    <!-- Disable content if not logged in -->
+    <div class="container mx-auto" style="max-width: 1400px; margin-top: 40px;">
+        <div class="row w-100 d-flex justify-content-center text-black gap-4 {% if not is_logged_in %} disabled-content {% endif %}">
+
+            <!-- Data Engineering -->
+            <div class="card col-md-3 col-12  text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="110" height="110" fill="currentColor" class="bi bi-database mb-3" viewBox="0 0 16 16">
+                    <path d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313M13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A5 5 0 0 0 13 5.698M14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13zm-1 4.698V10c0 .374-.356.875-1.318 1.313C10.766 11.729 9.464 12 8 12s-2.766-.27-3.682-.687C3.356 10.875 3 10.373 3 10V8.698c.271.202.58.378.904.525C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777A5 5 0 0 0 13 8.698m0 3V13c0 .374-.356.875-1.318 1.313C10.766 14.729 9.464 15 8 15s-2.766-.27-3.682-.687C3.356 13.875 3 13.373 3 13v-1.302c.271.202.58.378.904.525C4.978 12.71 6.427 13 8 13s3.022-.289 4.096-.777c.324-.147.633-.323.904-.525"/>
+                </svg>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Data Engineering</h5>
+                    <p class="card-text">Build, optimize, and maintain scalable data pipelines for seamless data flow, integration, and analytics.</p>
+                </div>
+            </div>
+        
+            <!-- Data Science -->
+            <div class="card col-md-3  text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="125" height="125" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16">
+                    <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z"/>
+                </svg>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Data Science</h5>
+                    <p class="card-text">Extract insights from data using machine learning, AI, and statistical models for smarter decision-making.</p>
+                </div>
+            </div>
+        
+            <!-- Software Engineering -->
+            <div class="card col-md-3 col-12  text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="125" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
+                    <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/>
+                </svg>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Software Engineering</h5>
+                    <p class="card-text">Design, develop, and deploy high-performance applications with best coding practices and scalable architecture.</p>
+                </div>
+            </div>
+        
+            <!-- Engineering Management -->
+            <div class="card col-md-3 col-12 text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+                </svg>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Engineering Management</h5>
+                    <p class="card-text">Lead technical teams, manage projects, and drive innovation with effective engineering strategies.</p>
+                </div>
+            </div>
+        
         </div>
         
     </div>
 
-  <!-- Disable content if not logged in -->
-<div class="container mx-auto" style="max-width: 1300px;">
-    <div class="row w-100 d-flex justify-content-start gap-3 {% if not is_logged_in %} disabled-content {% endif %}">
-        <div class="card col-md-3 col-12" style="width: 15rem;">
-            <img class="card-img-top" src="https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Card image cap">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
+    <style>
+        /* For PC: Center all cards in one row */
+        @media (min-width: 768px) {
+            .row {
+                display: flex;
+                justify-content: center;
+                /* Center all cards */
+                flex-wrap: nowrap;
+            }
 
-        <div class="card col-md-3 col-12" style="width: 18rem;">
-            <img class="card-img-top" src="https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Card image cap">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
+            .card {
+                flex: 0 0 auto;
+                /* Ensure cards don't stretch */
+            }
+        }
 
-        <div class="card col-md-3 col-12" style="width: 18rem;">
-            <img class="card-img-top" src="https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Card image cap">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div>
+        /* For mobile: Keep horizontal scrolling */
+        @media (max-width: 768px) {
+            .row {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: start;
+            }
+        }
+    </style>
 
-        <div class="card col-md-3 col-12" style="width: 18rem;">
-            <img class="card-img-top" src="https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Card image cap">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
+<div id="carousel" class="text-center py-4" style="height: 140px; margin-top: 70px; margin-bottom: 40px; background-color: rgb(242, 241, 241);">
+    <p class="text-black mb-4 fs-6 fw-semibold">
+        Join a community of 500K+ candidates who’ve landed jobs at top companies
+    </p>
+    <div class="row justify-content-center g-4">
+        <div class="col-auto">
+            <img alt="Meta logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/microsoft.png" />
+        </div>
+        <div class="col-auto">
+            <img alt="Google logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/meta.png" />
+        </div>
+        <div class="col-auto">
+            <img alt="Microsoft logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/google.png" />
+        </div>
+        <div class="col-auto">
+            <img alt="Amazon logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/amazon.png" />
+        </div>
+        <div class="col-auto">
+            <img alt="Airbnb logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/airbnb.png" />
+        </div>
+        <div class="col-auto">
+            <img alt="TikTok logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/tiktok.png" />
         </div>
     </div>
 </div>
 
 <style>
-    /* For PC and larger screens: Show all cards in a row without scrolling */
-    @media (min-width: 768px) {
-        .row {
-            display: flex;
-            justify-content: space-between; /* Spaced out cards */
-            flex-wrap: nowrap;
-        }
-
-        .card {
-            flex: 0 0 22%; /* Adjust card width */
-        }
+    .logo {
+        height: 30px; /* Set consistent logo height */
+        transition: transform 0.3s ease;
     }
 
-    /* For mobile: Keep horizontal scrolling */
     @media (max-width: 768px) {
-        .row {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+        #carousel {
+            width: 100%; /* Remove fixed width to make it fully responsive */
+            padding-left: 15px;  /* Prevents logo overflow */
+            padding-right: 15px;  /* Prevents logo overflow */
+        }
+        .logo {
+            height: 20px; /* Slightly smaller logos for mobile */
         }
     }
 </style>
-<section class="bg-secondary py-5 mt-4 mx-auto" style="max-width: 1300px;">
 
-    <div class="container mx-auto" >
-        <div class="row text-center text-white mx-0">
-            <div class="col-md-12">
-                <!-- Carousel wrapper -->
-                <div id="carouselBasicExample" class="carousel slide" data-bs-ride="carousel">
-                    <!-- Inner -->
-                    <div class="carousel-inner">
-                        <!-- Single item -->
-                        <div class="carousel-item active">
-                            <p class="lead font-italic mx-4 mx-md-5">
-                                "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, error amet
-                                numquam iure provident voluptate esse quasi, voluptas nostrum quisquam!"
-                            </p>
-                            <div class="mt-4 mb-3">
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(2).webp"
-                                    class="rounded-circle img-fluid shadow-1-strong" alt="Sample image" width="80"
-                                    height="80" />
-                            </div>
-                            <p class="text-light mb-0">- Anna Morian</p>
-                        </div>
 
-                        <!-- Single item -->
-                        <div class="carousel-item">
-                            <p class="lead font-italic mx-4 mx-md-5">
-                                "Neque cupiditate assumenda in maiores repudiandae mollitia adipisci maiores
-                                repudiandae mollitia consectetur adipisicing architecto elit sed adipiscing elit."
-                            </p>
-                            <div class="mt-4 mb-3">
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(31).webp"
-                                    class="rounded-circle img-fluid shadow-1-strong" alt="Sample image" width="80"
-                                    height="80" />
-                            </div>
-                            <p class="text-light mb-0">- Teresa May</p>
-                        </div>
 
-                        <!-- Single item -->
-                        <div class="carousel-item">
-                            <p class="lead font-italic mx-4 mx-md-5">
-                                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                                dolore eu fugiat nulla pariatur est laborum neque cupiditate assumenda in maiores."
-                            </p>
-                            <div class="mt-4 mb-3">
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp"
-                                    class="rounded-circle img-fluid shadow-1-strong" alt="Sample image" width="80"
-                                    height="80" />
+
+<h2 class="text-center mt-4 mb-3 fw-bold text-uppercase">Testimonials</h2>
+
+
+    <section  class=" py-5 mt-4 mx-auto border border-rounded">
+        
+        <div class="container mx-auto " >
+            <div class="row text-center text-black mx-0">
+                <div class="col-md-12">
+                    <!-- Carousel wrapper -->
+                    <div id="carouselBasicExample" class="carousel slide" data-bs-ride="carousel">
+                        <!-- Inner -->
+                        <div class="carousel-inner">
+                            <!-- Single item -->
+                            <div class="carousel-item active">
+                                <p class="lead font-italic mx-4 mx-md-5">
+                                    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, error amet
+                                    numquam iure provident voluptate esse quasi, voluptas nostrum quisquam!"
+                                </p>
+                                <div class="mt-4 mb-3">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(2).webp"
+                                        class="rounded-circle img-fluid shadow-1-strong" alt="Sample image" width="80"
+                                        height="80" />
+                                </div>
+                                <p class="text-light mb-0">- Anna Morian</p>
                             </div>
-                            <p class="text-light mb-0">- Kate Allise</p>
+
+                            <!-- Single item -->
+                            <div class="carousel-item">
+                                <p class="lead font-italic mx-4 mx-md-5">
+                                    "Neque cupiditate assumenda in maiores repudiandae mollitia adipisci maiores
+                                    repudiandae mollitia consectetur adipisicing architecto elit sed adipiscing elit."
+                                </p>
+                                <div class="mt-4 mb-3">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(31).webp"
+                                        class="rounded-circle img-fluid shadow-1-strong" alt="Sample image" width="80"
+                                        height="80" />
+                                </div>
+                                <p class="text-light mb-0">- Teresa May</p>
+                            </div>
+
+                            <!-- Single item -->
+                            <div class="carousel-item">
+                                <p class="lead font-italic mx-4 mx-md-5">
+                                    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                                    dolore eu fugiat nulla pariatur est laborum neque cupiditate assumenda in maiores."
+                                </p>
+                                <div class="mt-4 mb-3">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp"
+                                        class="rounded-circle img-fluid shadow-1-strong" alt="Sample image" width="80"
+                                        height="80" />
+                                </div>
+                                <p class="text-light mb-0">- Kate Allise</p>
+                            </div>
                         </div>
+                        <!-- Inner -->
+
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselBasicExample" data-bs-slide="prev">
+                            <i class="fas fa-chevron-left text-black fs-2"></i>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselBasicExample" data-bs-slide="next">
+                            <i class="fas fa-chevron-right text-black fs-2"></i>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        
                     </div>
-                    <!-- Inner -->
-
-                    <!-- Controls -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselBasicExample" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselBasicExample" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                    <!-- Carousel wrapper -->
                 </div>
-                <!-- Carousel wrapper -->
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
 
-
-
-<footer class="bg-white text-black pt-4 pb-2 mt-4">
-    <div class="container text-center text-md-start">
-        <div class="row">
-            <!-- About Section -->
-            <div class="col-md-4">
-                <h5 class="fw-bold">CareerHub</h5>
-                <p class="small">Empowering careers with guidance, mentorship, and resources.</p>
+    <footer class="text-black py-3 mt-4 bg-light">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <!-- Left: About -->
+            <div>
+                <h5 class="fw-bold mb-1">CareerHub</h5>
+                <p class="small mb-0">Empowering careers with guidance and mentorship.</p>
             </div>
-
-            <!-- Quick Links -->
-            <div class="col-md-4 text-black">
-                <h5 class="fw-bold text-black">Quick Links</h5>
-                <ul class="list-unstyled text-black">
-                    <li><a href="#" class="text-blacktext-decoration-none">Home</a></li>
-                    <li><a href="#" class="text-black text-decoration-none">About</a></li>
-                    <li><a href="#" class="text-black text-decoration-none">Blog</a></li>
-                    <li><a href="#" class="text-black text-decoration-none">Contact</a></li>
-                </ul>
+    
+            <div class="text-center mt-2">
+                <p class="small mb-0">&copy; 2025 CareerHub. All Rights Reserved.</p>
             </div>
-
-            <!-- Social Media -->
-            <div class="col-md-4 text-center text-md-end text-black">
-                <h5 class="fw-bold">Follow Us</h5>
-                <a href="#" class="text-black me-3"><i class="fab fa-facebook fa-lg"></i></a>
-                <a href="#" class="text-black me-3"><i class="fab fa-twitter fa-lg"></i></a>
-                <a href="#" class="text-black me-3"><i class="fab fa-instagram fa-lg"></i></a>
-                <a href="#" class="text-black"><i class="fab fa-linkedin fa-lg"></i></a>
+    
+            <!-- Right: Social Media -->
+            <div>
+                <a href="#" class="text-black mx-2"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-black mx-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-black mx-2"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-black mx-2"><i class="fab fa-linkedin"></i></a>
             </div>
         </div>
-
+    
         <!-- Copyright -->
-        <div class="text-center mt-3">
-            <p class="small mb-0">&copy; 2025 CareerHub. All Rights Reserved.</p>
-        </div>
-    </div>
-</footer>
-
-<!-- FontAwesome Icons -->
-<script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>
+        
+    </footer>
+    
+    <!-- FontAwesome Icons -->
+    <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>
 
 
-<!-- Ensure Bootstrap JS is included -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Ensure Bootstrap JS is included -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
 
 
     <script>
         {% if not is_logged_in %}
-            // Redirect to login page when non-logged-in users click on any link
-            document.querySelectorAll('a').forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    window.location.href = "{{ url_for('login') }}";  // Redirect to the login page
-                });
+        // Redirect to login page when non-logged-in users click on any link
+        document.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = "{{ url_for('login') }}";  // Redirect to the login page
             });
+        });
         {% endif %}
     </script>
+
+<script>
+    // Toggle menu open/close
+    function toggleMenu() {
+        const navbar = document.getElementById("navbar");
+        const navbarCollapse = document.getElementById("navbarNav");
+
+        // Toggle blur background effect
+        if (navbarCollapse.classList.contains("show")) {
+            navbar.classList.remove("blur-background");
+        } else {
+            navbar.classList.add("blur-background");
+        }
+    }
+</script>
+
 
 </body>
 

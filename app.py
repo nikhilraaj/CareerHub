@@ -30,6 +30,8 @@ def Home():
 def get_all_questions():
     if "user_id" not in session:
         return redirect(url_for("login"))
+    
+    is_logged_in = 'user_id' in session
 
     conn = get_db_connection()
     cur = conn.cursor()
@@ -46,7 +48,7 @@ def get_all_questions():
         "done": bool(question["done"])
     } for idx, question in enumerate(questions)]
 
-    return render_template("qsn.html", questions=question_list)
+    return render_template("qsn.html", questions=question_list,is_logged_in=is_logged_in)
 
 @app.route("/edit_question/<int:id>", methods=["POST"])
 def edit_question(id):
