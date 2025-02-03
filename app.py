@@ -7,6 +7,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 DATABASE_URL = "careerapp.db"
 SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key_here")  # Replace with your actual secret key
 
+if not os.path.exists(DATABASE_URL):
+    from init_db import create_tables
+    create_tables()
+
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = SECRET_KEY  # Secret key for session management
