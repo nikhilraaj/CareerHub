@@ -1,24 +1,21 @@
 import os
+import sqlite3
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-from bson import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# Get MongoDB URI from environment variable
-uri = os.getenv("MONGO_URI", "your_default_mongo_uri_here")  # Fallback to a default URI if the environment variable is not set
+# SQLite database file
+DATABASE_URL = "careerapp.db"
+SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key_here")  # Replace with your actual secret key
 
 # Initialize Flask app
 app = Flask(__name__)
+app.secret_key = SECRET_KEY  # Secret key for session management
 
-# Secret key for session management
-app.secret_key = os.getenv("SECRET_KEY", "your_default_secret_key_here")
-
-# Initialize MongoDB client within the route or app function to prevent issues with multi-threading
-client = MongoClient(uri, server_api=ServerApi('1'))
-db = client["question_db"]
-collection = db["questions"]
-user_collection = db["users"]
+# Function to connect to SQLite
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE_URL)
+    conn.row_factory = sqlite3.Row  # Allows dictionary-like access to rows
+    return conn
 
 @app.route("/", methods=["GET"])
 def Home():
@@ -27,67 +24,70 @@ def Home():
 
 @app.route("/get_all_questions", methods=["GET"])
 def get_all_questions():
-    if "user_id" not in session:  # Check if user is logged in
-        return redirect(url_for("login"))  # Redirect non-logged-in users to login page
+    if "user_id" not in session:
+        return redirect(url_for("login"))
 
-    questions = collection.find().sort("topic", 1)  # 1 for ascending order
-    question_list = []
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM questions ORDER BY topic ASC;")
+    questions = cur.fetchall()
+    conn.close()
 
-    for idx, question in enumerate(questions, start=1):
-        question_list.append({
-            "sr_no": idx,
-            "id": str(question["_id"]),
-            "topic": question["topic"],
-            "title": question["title"],
-            "practice_link": question["practice_link"],
-            "done": question.get("done", False)
-        })
+    question_list = [{
+        "sr_no": idx + 1,
+        "id": question["id"],
+        "topic": question["topic"],
+        "title": question["title"],
+        "practice_link": question["practice_link"],
+        "done": bool(question["done"])
+    } for idx, question in enumerate(questions)]
 
     return render_template("qsn.html", questions=question_list)
 
-@app.route("/edit_question/<id>", methods=["POST"])
+@app.route("/edit_question/<int:id>", methods=["POST"])
 def edit_question(id):
     data = request.form
-    update_data = {}
-
-    if "topic" in data:
-        update_data["topic"] = data["topic"]
-    if "title" in data:
-        update_data["title"] = data["title"]
-    if "practice_link" in data:
-        update_data["practice_link"] = data["practice_link"]
-
-    collection.update_one({"_id": ObjectId(id)}, {"$set": update_data})
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE questions SET topic = ?, title = ?, practice_link = ? WHERE id = ?",
+                (data["topic"], data["title"], data["practice_link"], id))
+    conn.commit()
+    conn.close()
     return redirect(url_for('get_all_questions'))
 
-@app.route("/delete_question/<id>", methods=["POST"])
+@app.route("/delete_question/<int:id>", methods=["POST"])
 def delete_question(id):
-    result = collection.delete_one({"_id": ObjectId(id)})
-    if result.deleted_count == 0:
-        return jsonify({"error": "Question not found"}), 404
-
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM questions WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
     return redirect(url_for('get_all_questions'))
 
-@app.route("/update_done/<id>", methods=["POST"])
+
+
+@app.route("/update_done/<int:id>", methods=["POST"])
 def update_done(id):
     done_status = request.form.get('done') == 'on'
-    collection.update_one({"_id": ObjectId(id)}, {"$set": {"done": done_status}})
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE questions SET done = ? WHERE id = ?", (int(done_status), id))
+    conn.commit()
+    conn.close()
     return jsonify({"message": "Status updated successfully!"})
 
 @app.route("/add_question", methods=["POST"])
 def add_question():
     data = request.get_json()
-
     if "topic" not in data or "title" not in data or "practice_link" not in data:
         return jsonify({"error": "Missing required fields"}), 400
 
-    question = {
-        "topic": data["topic"],
-        "title": data["title"],
-        "practice_link": data["practice_link"]
-    }
-
-    collection.insert_one(question)
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO questions (topic, title, practice_link, done) VALUES (?, ?, ?, ?)",
+                (data["topic"], data["title"], data["practice_link"], False))
+    conn.commit()
+    conn.close()
     return jsonify({"message": "Question added successfully!"}), 201
 
 @app.route("/register", methods=["GET", "POST"])
@@ -97,11 +97,19 @@ def register():
         password = request.form["password"]
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-        if user_collection.find_one({"username": username}):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE username = ?", (username,))
+        existing_user = cur.fetchone()
+
+        if existing_user:
             flash("User already exists!", "danger")
             return redirect(url_for("register"))
 
-        user_collection.insert_one({"username": username, "password": hashed_password})
+        cur.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        conn.commit()
+        conn.close()
+
         flash("Registration successful! Please login.", "success")
         return redirect(url_for("login"))
 
@@ -113,9 +121,14 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        user = user_collection.find_one({"username": username})
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE username = ?", (username,))
+        user = cur.fetchone()
+        conn.close()
+
         if user and check_password_hash(user["password"], password):
-            session["user_id"] = str(user["_id"])
+            session["user_id"] = user["id"]
             return redirect(url_for("Home"))
 
         flash("Invalid username or password!", "danger")
