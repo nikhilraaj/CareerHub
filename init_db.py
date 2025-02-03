@@ -19,7 +19,7 @@ def create_tables():
         topic TEXT NOT NULL,
         title TEXT NOT NULL,
         practice_link TEXT NOT NULL,
-        done BOOLEAN DEFAULT FALSE
+        done INTEGER DEFAULT 0
     )''')
 
     conn.commit()
