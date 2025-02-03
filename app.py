@@ -145,5 +145,20 @@ def logout():
     session.pop("user_id", None)
     return redirect(url_for("Home"))
 
+@app.route("/api/add_question", methods=["POST"])
+def api_add_question():
+    data = request.get_json()
+    if not data or "topic" not in data or "title" not in data or "practice_link" not in data:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO questions (topic, title, practice_link, done) VALUES (?, ?, ?, ?)",
+                (data["topic"], data["title"], data["practice_link"], 0))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Question added successfully!"}), 201
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
