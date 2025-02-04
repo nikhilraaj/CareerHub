@@ -99,6 +99,7 @@
             color: #FF6F61;
             border-color: #FF6F61;
         }
+        
     </style>
 </head>
 
@@ -176,7 +177,7 @@
 
         <div class="table-responsive">
             <table class="table table-dark table-bordered table-hover align-middle">
-                <thead class="thead-light">
+                <thead class="thead-light text-warning">
                     <tr>
                         <th scope="col">Sr. No</th>
                         <th scope="col">Topic</th>
@@ -189,11 +190,11 @@
                 <tbody>
                     {% for question in questions %}
                     <tr id="row-{{ question.id }}" class="topic-border-{{ question.topic|replace(' ', '') }}">
-                        <td class="text-center">{{ question.sr_no }}</td>
+                        <td class="text-center text-secondary">{{ question.sr_no }}</td>
                         <td class="topic-{{ question.id }} fw-bold">{{ question.topic }}</td>
-                        <td class="title-{{ question.id }}">{{ question.title }}</td>
+                        <td class="title-{{ question.id }} fw-bold text-info">{{ question.title }}</td>
                         <td class="link-{{ question.id }}">
-                            <a href="{{ question.practice_link }}" target="_blank">
+                            <a href="{{ question.practice_link }}" class="text-warning fs-6" target="_blank">
                                 {{ question.practice_link }}
                             </a>
                         </td>
