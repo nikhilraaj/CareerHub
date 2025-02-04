@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareerHub</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.jpg') }}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 
 
@@ -32,12 +34,15 @@
             transition: 0.3s ease-in-out;
         }
 
-        /* Dropdown open on hover */
-        .dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
+        /* Dropdown hover effect only for larger screens */
+        @media (min-width: 992px) {
+            .dropdown:hover .dropdown-menu {
+                display: block;
+                margin-top: 0;
+            }
         }
 
+        /* Smooth dropdown transitions */
         .dropdown-menu {
             transition: all 0.3s ease-in-out;
         }
@@ -65,10 +70,18 @@
             outline: none;
         }
 
+        /* Default icon */
         .navbar-toggler-icon {
             width: 30px;
             height: 30px;
             background: url("https://cdn-icons-png.flaticon.com/512/2976/2976215.png") no-repeat center;
+            background-size: contain;
+        }
+
+        /* Change icon when navbar is open */
+        .navbar-toggler.open .navbar-toggler-icon {
+            background: url("https://cdn-icons-png.flaticon.com/512/1828/1828778.png") no-repeat center;
+            /* Close icon */
             background-size: contain;
         }
 
@@ -79,7 +92,7 @@
             }
         }
 
-        /* Fixed navbar at the top with overflow handling */
+        /* Fixed navbar at the top */
         .navbar.fixed-top {
             position: fixed;
             top: 0;
@@ -89,15 +102,65 @@
             width: 100%;
         }
 
-        /* Spacing below navbar for content */
+        /* Body padding to prevent content hiding under navbar */
         body {
-            padding-top: 80px; /* Adjust for navbar height */
+            padding-top: 80px;
+            /* Adjust for navbar height */
         }
 
-        /* Blur effect for background when the menu is open */
+        /* Blur effect when menu is open */
         .navbar.blur-background {
             backdrop-filter: blur(5px);
         }
+
+        @media (max-width: 767px) {
+            .navbar-collapse .search-container input {
+                display: none !important;
+                /* Hide only the search box */
+            }
+        }
+
+        @media (max-width: 767px) {
+            .navbar-collapse .search-container {
+                display: none;
+                /* Keep search box hidden on mobile */
+            }
+
+            .navbar-collapse .btn {
+                display: block;
+                width: auto;
+                /* Remove full-width */
+                text-align: left;
+                /* Align text to the left */
+                padding: 0;
+                /* Remove extra padding */
+                margin-top: 10px;
+                /* Add margin for spacing */
+                background: none;
+                /* Remove background */
+                border: none;
+                /* Remove border */
+                color: #007bff;
+                /* Match color with other nav links */
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+
+            /* Adjust text color and appearance for both login and logout */
+            .navbar-collapse .btn-primary,
+            .navbar-collapse .btn-outline-primary {
+                text-align: left;
+                /* Align text left like other nav items */
+            }
+        }
+
+        .highlight {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+}
+
     </style>
 </head>
 
@@ -109,9 +172,10 @@
 
             <!-- Toggler -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" onclick="toggleMenu()">
-                <span class="navbar-toggler-icon"></span>
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" id="menuToggle">
+                <span class="navbar-toggler-icon" id="toggleIcon"></span>
             </button>
+
 
             <!-- Navbar Items -->
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -150,7 +214,8 @@
                             Resources
                         </a>
                         <ul class="dropdown-menu border-0 shadow-sm">
-                            <li><a class="dropdown-item" href="{{ url_for('get_all_questions') }}">DSA Questions</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('get_all_questions') }}">DSA Questions</a>
+                            </li>
                             <li><a class="dropdown-item" href="#">Data Science</a></li>
                             <li><a class="dropdown-item" href="#">UI/UX Design</a></li>
                             <li><a class="dropdown-item" href="#">Product Management</a></li>
@@ -164,14 +229,15 @@
                 </ul>
 
                 <!-- Search & Login -->
-                <form class="d-flex search-container">
-                    <input class="form-control me-2 border" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex search-container" id="searchForm">
+                    <input class="form-control me-2 border" type="search" id="searchInput" placeholder="Search" aria-label="Search">
                     {% if is_logged_in %}
                     <a href="{{ url_for('logout') }}" class="btn btn-outline-primary">Logout</a>
                     {% else %}
                     <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
                     {% endif %}
                 </form>
+                
             </div>
         </div>
     </nav>
@@ -191,62 +257,79 @@
             <h1 class="display-4 fw-bold mb-3">Build Your <span class="text-warning">Future</span> with CareerHub</h1>
             <p class="lead mb-4 fs-6 fw-normal text-muted">Explore career roadmaps, connect with mentors, and access all
                 the tools you need to succeed.</p>
-                <a href="#signup" class="btn btn-primary btn-sm rounded-pill shadow-sm">Get Started</a>
-                <a href="#signup" class="btn btn-outline-success btn-sm rounded-pill shadow-sm">Explore Blog</a>
-                
+            <a href="#signup" class="btn btn-primary btn-sm rounded-pill shadow-sm">Get Started</a>
+            <a href="#signup" class="btn btn-outline-success btn-sm rounded-pill shadow-sm">Explore Blog</a>
+
         </div>
 
     </div>
     <!-- Disable content if not logged in -->
     <div class="container mx-auto" style="max-width: 1400px; margin-top: 40px;">
-        <div class="row w-100 d-flex justify-content-center text-black gap-4 {% if not is_logged_in %} disabled-content {% endif %}">
+        <div
+            class="row w-100 d-flex justify-content-center text-black gap-4 {% if not is_logged_in %} disabled-content {% endif %}">
 
             <!-- Data Engineering -->
-            <div class="card col-md-3 col-12  text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="110" height="110" fill="currentColor" class="bi bi-database mb-3" viewBox="0 0 16 16">
-                    <path d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313M13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A5 5 0 0 0 13 5.698M14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13zm-1 4.698V10c0 .374-.356.875-1.318 1.313C10.766 11.729 9.464 12 8 12s-2.766-.27-3.682-.687C3.356 10.875 3 10.373 3 10V8.698c.271.202.58.378.904.525C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777A5 5 0 0 0 13 8.698m0 3V13c0 .374-.356.875-1.318 1.313C10.766 14.729 9.464 15 8 15s-2.766-.27-3.682-.687C3.356 13.875 3 13.373 3 13v-1.302c.271.202.58.378.904.525C4.978 12.71 6.427 13 8 13s3.022-.289 4.096-.777c.324-.147.633-.323.904-.525"/>
+            <div class="card col-md-3 col-12  text-black text-center d-flex align-items-center justify-content-center p-3"
+                style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="110" height="110" fill="currentColor"
+                    class="bi bi-database mb-3" viewBox="0 0 16 16">
+                    <path
+                        d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313M13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A5 5 0 0 0 13 5.698M14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13zm-1 4.698V10c0 .374-.356.875-1.318 1.313C10.766 11.729 9.464 12 8 12s-2.766-.27-3.682-.687C3.356 10.875 3 10.373 3 10V8.698c.271.202.58.378.904.525C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777A5 5 0 0 0 13 8.698m0 3V13c0 .374-.356.875-1.318 1.313C10.766 14.729 9.464 15 8 15s-2.766-.27-3.682-.687C3.356 13.875 3 13.373 3 13v-1.302c.271.202.58.378.904.525C4.978 12.71 6.427 13 8 13s3.022-.289 4.096-.777c.324-.147.633-.323.904-.525" />
                 </svg>
                 <div class="card-body">
                     <h5 class="card-title fw-bold">Data Engineering</h5>
-                    <p class="card-text">Build, optimize, and maintain scalable data pipelines for seamless data flow, integration, and analytics.</p>
+                    <p class="card-text">Build, optimize, and maintain scalable data pipelines for seamless data flow,
+                        integration, and analytics.</p>
                 </div>
             </div>
-        
+
             <!-- Data Science -->
-            <div class="card col-md-3  text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="125" height="125" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16">
-                    <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z"/>
+            <div class="card col-md-3  text-black text-center d-flex align-items-center justify-content-center p-3"
+                style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="125" height="125" fill="currentColor"
+                    class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z" />
                 </svg>
                 <div class="card-body">
                     <h5 class="card-title fw-bold">Data Science</h5>
-                    <p class="card-text">Extract insights from data using machine learning, AI, and statistical models for smarter decision-making.</p>
+                    <p class="card-text">Extract insights from data using machine learning, AI, and statistical models
+                        for smarter decision-making.</p>
                 </div>
             </div>
-        
+
             <!-- Software Engineering -->
-            <div class="card col-md-3 col-12  text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="125" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
-                    <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/>
+            <div class="card col-md-3 col-12  text-black text-center d-flex align-items-center justify-content-center p-3"
+                style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="125" fill="currentColor"
+                    class="bi bi-code-slash" viewBox="0 0 16 16">
+                    <path
+                        d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0" />
                 </svg>
                 <div class="card-body">
                     <h5 class="card-title fw-bold">Software Engineering</h5>
-                    <p class="card-text">Design, develop, and deploy high-performance applications with best coding practices and scalable architecture.</p>
+                    <p class="card-text">Design, develop, and deploy high-performance applications with best coding
+                        practices and scalable architecture.</p>
                 </div>
             </div>
-        
+
             <!-- Engineering Management -->
-            <div class="card col-md-3 col-12 text-black text-center d-flex align-items-center justify-content-center p-3" style="width: 18rem; height: 100%; ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
-                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+            <div class="card col-md-3 col-12 text-black text-center d-flex align-items-center justify-content-center p-3"
+                style="width: 18rem; height: 100%; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
+                    class="bi bi-people" viewBox="0 0 16 16">
+                    <path
+                        d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4" />
                 </svg>
                 <div class="card-body">
                     <h5 class="card-title fw-bold">Engineering Management</h5>
-                    <p class="card-text">Lead technical teams, manage projects, and drive innovation with effective engineering strategies.</p>
+                    <p class="card-text">Lead technical teams, manage projects, and drive innovation with effective
+                        engineering strategies.</p>
                 </div>
             </div>
-        
+
         </div>
-        
+
     </div>
 
     <style>
@@ -276,59 +359,72 @@
         }
     </style>
 
-<div id="carousel" class="text-center py-4" style="height: 140px; margin-top: 70px; margin-bottom: 40px; background-color: rgb(242, 241, 241);">
-    <p class="text-black mb-4 fs-6 fw-semibold">
-        Join a community of 500K+ candidates who’ve landed jobs at top companies
-    </p>
-    <div class="row justify-content-center g-4">
-        <div class="col-auto">
-            <img alt="Meta logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/microsoft.png" />
-        </div>
-        <div class="col-auto">
-            <img alt="Google logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/meta.png" />
-        </div>
-        <div class="col-auto">
-            <img alt="Microsoft logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/google.png" />
-        </div>
-        <div class="col-auto">
-            <img alt="Amazon logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/amazon.png" />
-        </div>
-        <div class="col-auto">
-            <img alt="Airbnb logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/airbnb.png" />
-        </div>
-        <div class="col-auto">
-            <img alt="TikTok logo" class="img-fluid logo" src="https://www.tryexponent.com/images/companies/tiktok.png" />
+    <div id="carousel" class="text-center py-4"
+        style="height: 140px; margin-top: 70px; margin-bottom: 40px; background-color: rgb(242, 241, 241);">
+        <p class="text-black mb-4 fs-6 fw-semibold">
+            Join a community of 500K+ candidates who’ve landed jobs at top companies
+        </p>
+        <div class="row justify-content-center g-4">
+            <div class="col-auto">
+                <img alt="Meta logo" class="img-fluid logo"
+                    src="https://www.tryexponent.com/images/companies/microsoft.png" />
+            </div>
+            <div class="col-auto">
+                <img alt="Google logo" class="img-fluid logo"
+                    src="https://www.tryexponent.com/images/companies/meta.png" />
+            </div>
+            <div class="col-auto">
+                <img alt="Microsoft logo" class="img-fluid logo"
+                    src="https://www.tryexponent.com/images/companies/google.png" />
+            </div>
+            <div class="col-auto">
+                <img alt="Amazon logo" class="img-fluid logo"
+                    src="https://www.tryexponent.com/images/companies/amazon.png" />
+            </div>
+            <div class="col-auto">
+                <img alt="Airbnb logo" class="img-fluid logo"
+                    src="https://www.tryexponent.com/images/companies/airbnb.png" />
+            </div>
+            <div class="col-auto">
+                <img alt="TikTok logo" class="img-fluid logo"
+                    src="https://www.tryexponent.com/images/companies/tiktok.png" />
+            </div>
         </div>
     </div>
-</div>
 
-<style>
-    .logo {
-        height: 30px; /* Set consistent logo height */
-        transition: transform 0.3s ease;
-    }
-
-    @media (max-width: 768px) {
-        #carousel {
-            width: 100%; /* Remove fixed width to make it fully responsive */
-            padding-left: 15px;  /* Prevents logo overflow */
-            padding-right: 15px;  /* Prevents logo overflow */
-        }
+    <style>
         .logo {
-            height: 20px; /* Slightly smaller logos for mobile */
+            height: 30px;
+            /* Set consistent logo height */
+            transition: transform 0.3s ease;
         }
-    }
-</style>
+
+        @media (max-width: 768px) {
+            #carousel {
+                width: 100%;
+                /* Remove fixed width to make it fully responsive */
+                padding-left: 15px;
+                /* Prevents logo overflow */
+                padding-right: 15px;
+                /* Prevents logo overflow */
+            }
+
+            .logo {
+                height: 20px;
+                /* Slightly smaller logos for mobile */
+            }
+        }
+    </style>
 
 
 
+<div class="searchable">
+    <h2 class="text-center mt-4 mb-3 fw-bold text-uppercase">Testimonials</h2>
 
-<h2 class="text-center mt-4 mb-3 fw-bold text-uppercase">Testimonials</h2>
 
+    <section class=" py-5 mt-4 mx-auto border border-rounded">
 
-    <section  class=" py-5 mt-4 mx-auto border border-rounded">
-        
-        <div class="container mx-auto " >
+        <div class="container mx-auto ">
             <div class="row text-center text-black mx-0">
                 <div class="col-md-12">
                     <!-- Carousel wrapper -->
@@ -379,22 +475,24 @@
                         </div>
                         <!-- Inner -->
 
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselBasicExample" data-bs-slide="prev">
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselBasicExample"
+                            data-bs-slide="prev">
                             <i class="fas fa-chevron-left text-black fs-2"></i>
                             <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselBasicExample" data-bs-slide="next">
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselBasicExample"
+                            data-bs-slide="next">
                             <i class="fas fa-chevron-right text-black fs-2"></i>
                             <span class="visually-hidden">Next</span>
                         </button>
-                        
+
                     </div>
                     <!-- Carousel wrapper -->
                 </div>
             </div>
         </div>
     </section>
-
+</div>
 
     <footer class="text-black py-3 mt-4 bg-light">
         <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
@@ -403,11 +501,11 @@
                 <h5 class="fw-bold mb-1">CareerHub</h5>
                 <p class="small mb-0">Empowering careers with guidance and mentorship.</p>
             </div>
-    
+
             <div class="text-center mt-2">
                 <p class="small mb-0">&copy; 2025 CareerHub. All Rights Reserved.</p>
             </div>
-    
+
             <!-- Right: Social Media -->
             <div>
                 <a href="#" class="text-black mx-2"><i class="fab fa-facebook"></i></a>
@@ -416,11 +514,11 @@
                 <a href="#" class="text-black mx-2"><i class="fab fa-linkedin"></i></a>
             </div>
         </div>
-    
+
         <!-- Copyright -->
-        
+
     </footer>
-    
+
     <!-- FontAwesome Icons -->
     <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>
 
@@ -430,33 +528,99 @@
 
 
 
-
     <script>
-        {% if not is_logged_in %}
-        // Redirect to login page when non-logged-in users click on any link
-        document.querySelectorAll('a').forEach(function (link) {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                window.location.href = "{{ url_for('login') }}";  // Redirect to the login page
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggler = document.getElementById("menuToggle");
+            const navbarCollapse = document.getElementById("navbarNav");
+            const icon = toggler.querySelector(".navbar-toggler-icon");
+
+            // Redirect non-logged-in users when clicking any link
+            {% if not is_logged_in %}
+            document.querySelectorAll("a").forEach(function (link) {
+                link.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    window.location.href = "{{ url_for('login') }}";
+                });
+            });
+            {% endif %}
+
+            // Toggle menu and change icon
+            toggler.addEventListener("click", function () {
+                setTimeout(() => {
+                    if (navbarCollapse.classList.contains("show")) {
+                        icon.style.backgroundImage = 'url("https://cdn-icons-png.flaticon.com/512/1828/1828778.png")'; // Close icon (✖)
+                    } else {
+                        icon.style.backgroundImage = 'url("https://cdn-icons-png.flaticon.com/512/2976/2976215.png")'; // Hamburger icon
+                    }
+                }, 150); // Slight delay to sync with Bootstrap animation
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!toggler.contains(event.target) && !navbarCollapse.contains(event.target)) {
+                    navbarCollapse.classList.remove("show");
+                    icon.style.backgroundImage = 'url("https://cdn-icons-png.flaticon.com/512/2976/2976215.png")'; // Reset to Hamburger icon
+                }
             });
         });
-        {% endif %}
-    </script>
 
-<script>
-    // Toggle menu open/close
-    function toggleMenu() {
-        const navbar = document.getElementById("navbar");
-        const navbarCollapse = document.getElementById("navbarNav");
+        document.addEventListener("DOMContentLoaded", function () {
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
 
-        // Toggle blur background effect
-        if (navbarCollapse.classList.contains("show")) {
-            navbar.classList.remove("blur-background");
-        } else {
-            navbar.classList.add("blur-background");
+        // Event listener for the Enter key press in the search input
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form submission
+            const query = searchInput.value.trim().toLowerCase(); // Get search query and remove extra spaces
+
+            if (!query) {
+                alert("Please enter a search term.");
+                return;
+            }
+
+            // Find all text/content sections to search within
+            const contentItems = document.querySelectorAll('.searchable'); // Add 'searchable' class to content you want to search
+            let found = false;
+
+            // Loop through content and search for the query
+            contentItems.forEach(item => {
+                const contentText = item.textContent.toLowerCase(); // Get plain text content (case-insensitive)
+
+                if (contentText.includes(query)) {
+                    item.style.display = ''; // Show matching item
+                    found = true;
+
+                    // Scroll to the matched item and highlight the text
+                    item.scrollIntoView({ behavior: "smooth", block: "center" }); // Scroll to the matching content
+                    highlightText(item, query); // Call the function to highlight the text
+                } else {
+                    item.style.display = 'none'; // Hide non-matching item
+                }
+            });
+
+            // Display "No Results Found" if no match
+            if (!found) {
+                alert("No Results Found");
+            }
+        });
+    });
+
+    // Function to highlight the matched text
+    function highlightText(element, query) {
+        const innerHTML = element.innerHTML;
+        const index = innerHTML.toLowerCase().indexOf(query);
+        if (index >= 0) {
+            // Highlight the matched text
+            element.innerHTML = innerHTML.substring(0, index) + 
+                                "<span class='highlight'>" + 
+                                innerHTML.substring(index, index + query.length) + 
+                                "</span>" + 
+                                innerHTML.substring(index + query.length);
         }
     }
-</script>
+    </script>
+
+
 
 
 </body>
