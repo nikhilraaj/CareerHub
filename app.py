@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 DATABASE_URL = "careerapp.db"
-SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key_here")  # Replace with your actual secret key
+SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key_here")  
 
 if not os.path.exists(DATABASE_URL):
     from init_db import create_tables
@@ -15,7 +15,6 @@ if not os.path.exists(DATABASE_URL):
 app = Flask(__name__)
 app.secret_key = SECRET_KEY  
 
-# Function to connect to SQLite
 def get_db_connection():
     conn = sqlite3.connect(DATABASE_URL)
     conn.row_factory = sqlite3.Row 
@@ -69,8 +68,6 @@ def delete_question(id):
     conn.commit()
     conn.close()
     return redirect(url_for('get_all_questions'))
-
-
 
 @app.route("/update_done/<int:id>", methods=["POST"])
 def update_done(id):
